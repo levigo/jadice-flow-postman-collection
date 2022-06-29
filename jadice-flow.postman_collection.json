@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "762ca94e-6f3a-4d04-98ab-a95a6dede89b",
+		"_postman_id": "98bad1d6-6308-4d44-ad93-3572016dbd63",
 		"name": "jadice-flow",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "8089295"
@@ -159,13 +159,697 @@
 			"name": "director",
 			"item": [
 				{
-					"name": "register_job",
+					"name": "jobs pending",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{JS_DIRECTOR_URL}}/v1/engine/job/pending/count",
+							"host": [
+								"{{JS_DIRECTOR_URL}}"
+							],
+							"path": [
+								"v1",
+								"engine",
+								"job",
+								"pending",
+								"count"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ocr-bundle",
+			"item": [
+				{
+					"name": "director health check",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
+									"pm.test(\"Status code is 200\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"}\r",
+									");\r",
+									"\r",
+									"pm.test('All services are up and running', () => {\r",
+									"    pm.expect(pm.response.text()).to.not.include(\"down\");\r",
+									"})\r",
 									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{JS_DIRECTOR_URL}}/actuator/health",
+							"host": [
+								"{{JS_DIRECTOR_URL}}"
+							],
+							"path": [
+								"actuator",
+								"health"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "worker job-types info",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function(){",
+									"    pm.response.to.have.status(200);",
+									"}",
+									");",
+									"",
+									"pm.test('OCR-worker is listed as registered', () => {",
+									"    pm.expect(pm.response.text()).to.include(\"jf-single:ocr\");",
+									"})",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/pdf"
+							}
+						],
+						"url": {
+							"raw": "{{JS_DIRECTOR_URL}}/v1/engine/job-types",
+							"host": [
+								"{{JS_DIRECTOR_URL}}"
+							],
+							"path": [
+								"v1",
+								"engine",
+								"job-types"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "worker job-types ocr",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function(){",
+									"    pm.response.to.have.status(200);",
+									"}",
+									");",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/pdf"
+							}
+						],
+						"url": {
+							"raw": "{{JS_DIRECTOR_URL}}/v1/engine/job-types/jf-single:ocr",
+							"host": [
+								"{{JS_DIRECTOR_URL}}"
+							],
+							"path": [
+								"v1",
+								"engine",
+								"job-types",
+								"jf-single:ocr"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "start Job ocr < PDF dummy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"    \r",
+									"    let jsonData = pm.response.json();\r",
+									"    let jobId = jsonData.jobId;\r",
+									"\r",
+									"    pm.collectionVariables.set(\"jobId\", jobId);\r",
+									"    console.log(jobId)\r",
+									"}\r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n \"source\" : [ {\n   \"uri\" : \"https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf\",\n   \"descriptor\" : {\n     \"mimeType\" : \"application/pdf\",\n     \"semanticType\" : null,\n     \"description\" : null,\n     \"fileName\" : \"dummy.pdf\",\n     \"id\" : null,\n     \"properties\" : {\"content-language\": \"deu\", \"page-segmentation-mode\": \"3\"},\n     \"parent\" : null\n   }\n } ],\n \"configuration\" : {\"output-formats\": \"text\" }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{JS_DIRECTOR_URL}}/v1/engine/job/jf-single:ocr",
+							"host": [
+								"{{JS_DIRECTOR_URL}}"
+							],
+							"path": [
+								"v1",
+								"engine",
+								"job",
+								"jf-single:ocr"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "job state",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"}\r",
+									");\r",
+									"\r",
+									"pm.test('The requested job does not have the status failed', () => {\r",
+									"    pm.expect(pm.response.text()).to.not.include(\"FAILED\");\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let jobId = pm.collectionVariables.get(\"jobId\");\r",
+									"\r",
+									"if (jobId != null){\r",
+									"    pm.environment.set(\"jobId\", jobId);\r",
+									"} else (pm.environment.set(\"jobId\", 1));\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{JS_DIRECTOR_URL}}/v1/engine/job/:jobId/state",
+							"host": [
+								"{{JS_DIRECTOR_URL}}"
+							],
+							"path": [
+								"v1",
+								"engine",
+								"job",
+								":jobId",
+								"state"
+							],
+							"variable": [
+								{
+									"key": "jobId",
+									"value": "{{jobId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "job result",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"}\r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let jobId = pm.collectionVariables.get(\"jobId\");\r",
+									"\r",
+									"if (jobId != null){\r",
+									"    pm.environment.set(\"jobId\", jobId);\r",
+									"} else (pm.environment.set(\"jobId\", 1));\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{JS_DIRECTOR_URL}}/v1/engine/job/:jobId/result",
+							"host": [
+								"{{JS_DIRECTOR_URL}}"
+							],
+							"path": [
+								"v1",
+								"engine",
+								"job",
+								":jobId",
+								"result"
+							],
+							"variable": [
+								{
+									"key": "jobId",
+									"value": "{{jobId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "email-bundle",
+			"item": [
+				{
+					"name": "director health check",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"}\r",
+									");\r",
+									"\r",
+									"pm.test('All services are up and running', () => {\r",
+									"    pm.expect(pm.response.text()).to.not.include(\"down\");\r",
+									"})\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{JS_DIRECTOR_URL}}/actuator/health",
+							"host": [
+								"{{JS_DIRECTOR_URL}}"
+							],
+							"path": [
+								"actuator",
+								"health"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "worker job-types info",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function(){",
+									"    pm.response.to.have.status(200);",
+									"}",
+									");",
+									"",
+									"pm.test('emaildisassembly-worker is listed as registered', () => {",
+									"    pm.expect(pm.response.text()).to.include(\"jf-single:emaildisassembly\");",
+									"})",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/pdf"
+							}
+						],
+						"url": {
+							"raw": "{{JS_DIRECTOR_URL}}/v1/engine/job-types",
+							"host": [
+								"{{JS_DIRECTOR_URL}}"
+							],
+							"path": [
+								"v1",
+								"engine",
+								"job-types"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "worker job-types emaildisassembly",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function(){",
+									"    pm.response.to.have.status(200);",
+									"}",
+									");",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/pdf"
+							}
+						],
+						"url": {
+							"raw": "{{JS_DIRECTOR_URL}}/v1/engine/job-types/jf-single:emaildisassembly",
+							"host": [
+								"{{JS_DIRECTOR_URL}}"
+							],
+							"path": [
+								"v1",
+								"engine",
+								"job-types",
+								"jf-single:emaildisassembly"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "worker job-types totiff",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function(){",
+									"    pm.response.to.have.status(200);",
+									"}",
+									");",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"type": "text",
+								"value": "application/pdf"
+							}
+						],
+						"url": {
+							"raw": "{{JS_DIRECTOR_URL}}/v1/engine/job-types/jf-single:totiff",
+							"host": [
+								"{{JS_DIRECTOR_URL}}"
+							],
+							"path": [
+								"v1",
+								"engine",
+								"job-types",
+								"jf-single:totiff"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "env - start job toTiff Copy",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"    \r",
+									"    let jsonData = pm.response.json();\r",
+									"    let jobId = jsonData.jobId;\r",
+									"\r",
+									"    pm.collectionVariables.set(\"jobId\", jobId);\r",
+									"    console.log(jobId)\r",
+									"}\r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n \"source\" : [ {\n   \"uri\" : \"https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf\",\n   \"descriptor\" : {\n     \"mimeType\" : null,\n     \"semanticType\" : null,\n     \"description\" : null,\n     \"fileName\" : null,\n     \"id\" : null,\n     \"properties\" : { },\n     \"parent\" : null\n   }\n } ],\n \"configuration\" : null\n}"
+						},
+						"url": {
+							"raw": "{{JS_DIRECTOR_URL}}/v1/engine/job/jf-single:totiff",
+							"host": [
+								"{{JS_DIRECTOR_URL}}"
+							],
+							"path": [
+								"v1",
+								"engine",
+								"job",
+								"jf-single:totiff"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "job state",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"}\r",
+									");\r",
+									"\r",
+									"pm.test('The requested job does not have the status failed', () => {\r",
+									"    pm.expect(pm.response.text()).to.not.include(\"FAILED\");\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let jobId = pm.collectionVariables.get(\"jobId\");\r",
+									"\r",
+									"if (jobId != null){\r",
+									"    pm.environment.set(\"jobId\", jobId);\r",
+									"} else (pm.environment.set(\"jobId\", 1));\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{JS_DIRECTOR_URL}}/v1/engine/job/:jobId/state",
+							"host": [
+								"{{JS_DIRECTOR_URL}}"
+							],
+							"path": [
+								"v1",
+								"engine",
+								"job",
+								":jobId",
+								"state"
+							],
+							"variable": [
+								{
+									"key": "jobId",
+									"value": "{{jobId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "job result",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function(){\r",
+									"    pm.response.to.have.status(200);\r",
+									"}\r",
+									");"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let jobId = pm.collectionVariables.get(\"jobId\");\r",
+									"\r",
+									"if (jobId != null){\r",
+									"    pm.environment.set(\"jobId\", jobId);\r",
+									"} else (pm.environment.set(\"jobId\", 1));\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{JS_DIRECTOR_URL}}/v1/engine/job/:jobId/result",
+							"host": [
+								"{{JS_DIRECTOR_URL}}"
+							],
+							"path": [
+								"v1",
+								"engine",
+								"job",
+								":jobId",
+								"result"
+							],
+							"variable": [
+								{
+									"key": "jobId",
+									"value": "{{jobId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Add OCR-Worker",
+			"item": [
+				{
+					"name": "register_ocr_worker",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function(){\r",
+									"    pm.response.to.have.status(204);\r",
+									"}\r",
+									");"
 								],
 								"type": "text/javascript"
 							}
@@ -205,16 +889,29 @@
 					"response": []
 				},
 				{
-					"name": "worker job-types info",
+					"name": "worker job-types info Copy",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"response is not bad\", function(){",
+									"pm.test(\"Status code is 200\", function(){",
 									"    pm.response.to.have.status(200);",
 									"}",
 									");",
+									"",
+									"pm.test('OCR-worker is listed as registered', () => {",
+									"    pm.expect(pm.response.text()).to.include(\"jf-single:ocr\");",
+									"})",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
 									""
 								],
 								"type": "text/javascript"
@@ -245,302 +942,6 @@
 					"response": []
 				}
 			]
-		},
-		{
-			"name": "worker",
-			"item": [
-				{
-					"name": "worker job-types ocr",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"response is not bad\", function(){",
-									"    pm.response.to.have.status(200);",
-									"}",
-									");",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"type": "text",
-								"value": "application/pdf"
-							}
-						],
-						"url": {
-							"raw": "{{JS_DIRECTOR_URL}}/v1/engine/job-types/jf-single:ocr",
-							"host": [
-								"{{JS_DIRECTOR_URL}}"
-							],
-							"path": [
-								"v1",
-								"engine",
-								"job-types",
-								"jf-single:ocr"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Post a job",
-			"item": [
-				{
-					"name": "OCR",
-					"item": [
-						{
-							"name": "start Job ocr < TIFF",
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n \"source\" : [ {\n   \"uri\" : \"https://webserver.sol-01.k8s.levigo.net/eurotext.tif\",\n   \"descriptor\" : {\n     \"mimeType\" : \"image/tiff\",\n     \"semanticType\" : null,\n     \"description\" : null,\n     \"fileName\" : \"eurotext.tiff\",\n     \"id\" : null,\n     \"properties\" : {\"content-language\": \"deu+eng+fra+ita+spa\", \"page-segmentation-mode\": \"3\"},\n     \"parent\" : null\n   }\n } ],\n \"configuration\" : {\"output-formats\": \"pdf\" }\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{JS_DIRECTOR_URL}}/v1/engine/job/jf-single:ocr",
-									"host": [
-										"{{JS_DIRECTOR_URL}}"
-									],
-									"path": [
-										"v1",
-										"engine",
-										"job",
-										"jf-single:ocr"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "start Job ocr < PDF dummy",
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n \"source\" : [ {\n   \"uri\" : \"https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf\",\n   \"descriptor\" : {\n     \"mimeType\" : \"application/pdf\",\n     \"semanticType\" : null,\n     \"description\" : null,\n     \"fileName\" : \"dummy.pdf\",\n     \"id\" : null,\n     \"properties\" : {\"content-language\": \"deu\", \"page-segmentation-mode\": \"3\"},\n     \"parent\" : null\n   }\n } ],\n \"configuration\" : {\"output-formats\": \"text\" }\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{JS_DIRECTOR_URL}}/v1/engine/job/jf-single:ocr",
-									"host": [
-										"{{JS_DIRECTOR_URL}}"
-									],
-									"path": [
-										"v1",
-										"engine",
-										"job",
-										"jf-single:ocr"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "start Job ocr < PDF",
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n \"source\" : [ {\n   \"uri\" : \"https://webserver.sol-01.k8s.levigo.net/verwandlung_first_page.pdf\",\n   \"descriptor\" : {\n     \"mimeType\" : \"application/pdf\",\n     \"semanticType\" : null,\n     \"description\" : null,\n     \"fileName\" : \"verwandlung_first_page.pdf\",\n     \"id\" : null,\n     \"properties\" : {\"content-language\": \"deu\", \"page-segmentation-mode\": \"3\"},\n     \"parent\" : null\n   }\n } ],\n \"configuration\" : {\"output-formats\": \"text\" }\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{JS_DIRECTOR_URL}}/v1/engine/job/jf-single:ocr",
-									"host": [
-										"{{JS_DIRECTOR_URL}}"
-									],
-									"path": [
-										"v1",
-										"engine",
-										"job",
-										"jf-single:ocr"
-									]
-								}
-							},
-							"response": []
-						}
-					]
-				}
-			]
-		},
-		{
-			"name": "Job status & result",
-			"item": [
-				{
-					"name": "job state",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{JS_DIRECTOR_URL}}/v1/engine/job/:jobId/state",
-							"host": [
-								"{{JS_DIRECTOR_URL}}"
-							],
-							"path": [
-								"v1",
-								"engine",
-								"job",
-								":jobId",
-								"state"
-							],
-							"variable": [
-								{
-									"key": "jobId",
-									"value": "5"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "job result",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "",
-								"value": "",
-								"type": "text",
-								"disabled": true
-							}
-						],
-						"url": {
-							"raw": "{{JS_DIRECTOR_URL}}/v1/engine/job/:jobId/result",
-							"host": [
-								"{{JS_DIRECTOR_URL}}"
-							],
-							"path": [
-								"v1",
-								"engine",
-								"job",
-								":jobId",
-								"result"
-							],
-							"variable": [
-								{
-									"key": "jobId",
-									"value": "5"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "jobs pending",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{JS_DIRECTOR_URL}}/v1/engine/job/pending/count",
-							"host": [
-								"{{JS_DIRECTOR_URL}}"
-							],
-							"path": [
-								"v1",
-								"engine",
-								"job",
-								"pending",
-								"count"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "s3-upload",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"exec": [
-							""
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Accept",
-						"type": "text",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "file",
-							"type": "file",
-							"src": "/C:/Users/schwabsh/Pictures/images/monster (1).png"
-						}
-					]
-				},
-				"url": {
-					"raw": "{{JS_S3_URL}}/v1/upload",
-					"host": [
-						"{{JS_S3_URL}}"
-					],
-					"path": [
-						"v1",
-						"upload"
-					]
-				}
-			},
-			"response": []
 		}
 	],
 	"auth": {
@@ -581,6 +982,10 @@
 		{
 			"key": "DUMMY_PDF_URL",
 			"value": "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+		},
+		{
+			"key": "jobId",
+			"value": ""
 		}
 	]
 }
