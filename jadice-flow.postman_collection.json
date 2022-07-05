@@ -340,12 +340,11 @@
 									"\r",
 									"const sleepBetweenTries = 5000;\r",
 									"\r",
-									"pm.test('The requested job has the status finished', () => {\r",
+									"pm.test('The request is currently being processed or has been successfully completed', () => {\r",
 									"    if(!['FAILED', 'FINISHED'].find(e => pm.response.text().includes(e))){        \r",
 									"        setTimeout(function() {\r",
 									"            postman.setNextRequest(request.name);\r",
 									"        }, sleepBetweenTries);\r",
-									"        pm.expect(pm.response.text()).to.be.a('FAILED or FINISHED');\r",
 									"    }else if(pm.expect(pm.response.text()).to.include('FINISHED')){\r",
 									"    }\r",
 									"})"
