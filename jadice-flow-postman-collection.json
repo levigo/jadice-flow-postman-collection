@@ -342,7 +342,7 @@
 									"\r",
 									"pm.test('The request is currently being processed or has been successfully completed', () => {\r",
 									"    console.log(\"Response: \" + pm.response.text());\r",
-									"    if(!['FAILED', 'FINISHED'].find(e => pm.response.text().includes(e))){        \r",
+									"    if(!['FAILED', 'FINISHED'].find(e => pm.response.text().includes(e)) && pm.response.code < \"300\"){        \r",
 									"        setTimeout(function() {\r",
 									"            postman.setNextRequest(request.name);\r",
 									"        }, sleepBetweenTries);\r",
