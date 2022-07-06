@@ -7,8 +7,6 @@ on:
 jobs:
   newman:
     runs-on: ubuntu-latest
-    defaults:
-      run: cd ${{ inputs.working_directory }}
     steps:
       - uses: actions/checkout@master
       - uses: matt-ball/newman-action@master
