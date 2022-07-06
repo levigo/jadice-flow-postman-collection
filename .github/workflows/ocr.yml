@@ -12,7 +12,7 @@ jobs:
       - uses: matt-ball/newman-action@master
         with:
           collection: 'jadice-flow-postman-collection.json'
-          environment: 'jadice-flow-postman-environment.json.json'
+          environment: 'jadice-flow-postman-environment.json'
           folder: '["ocr-bundle"]'
           reporters: '["cli"]'
           envVar: '[{ "key": "JS_DIRECTOR_URL", "value": "https://ocr-jadice-flow.apps.openshift-05.matrix.de" }, { "key": "JADICE-SERVER-ACCESS-TOKEN", "value": "${{ secrets.JADICE_SERVER_ACCESS_TOKEN }}" }]'
