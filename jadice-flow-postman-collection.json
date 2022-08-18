@@ -670,7 +670,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n \"source\" : [ {\n   \"uri\" : \"https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf\",\n   \"descriptor\" : {\n     \"mimeType\" : null,\n     \"semanticType\" : null,\n     \"description\" : null,\n     \"fileName\" : null,\n     \"id\" : null,\n     \"properties\" : { },\n     \"parent\" : null\n   }\n } ],\n \"configuration\" : null\n}"
+							"raw": "{\n \"source\" : [ {\n   \"uri\" : \"https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf\",\n   \"descriptor\" : {\n     \"mimeType\" : \"application/pdf\",\n     \"semanticType\" : null,\n     \"description\" : null,\n     \"fileName\" : null,\n     \"id\" : null,\n     \"properties\" : { },\n     \"parent\" : null\n   }\n } ],\n \"configuration\" : null\n}"
 						},
 						"url": {
 							"raw": "{{JS_DIRECTOR_URL}}/v1/engine/job/jf-single:totiff",
