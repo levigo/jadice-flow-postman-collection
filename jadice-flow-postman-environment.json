@@ -17,6 +17,11 @@
 			"value": "",
 			"type": "any",
 			"enabled": true
+		},
+		{
+			"key": "JS_Worker_URL",
+			"value": "",
+			"enabled": true
 		}
 	],
 	"_postman_variable_scope": "environment",
