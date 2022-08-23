@@ -2,7 +2,7 @@ name: OS-OCR Integrationstest
 on:
   push:
     branches:
-      - master
+      - test/openshift
   workflow_call:
 jobs:
   newman:
